@@ -9,7 +9,7 @@ loginButton.addEventListener("click", (e) => {
     // Very insecure and very crap, i know
     if (username === "user" && password === "web_dev") {
         alert("You have successfully logged in.");
-        location.replace("track.html")
+        window.location.replace("https://djgriffioen.live/track")
     } else {
         loginErrorMsg.style.opacity = 1;
     }
