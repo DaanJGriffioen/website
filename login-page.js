@@ -7,7 +7,7 @@ loginButton.addEventListener("click", (e) => {
     const username = loginForm.username.value;
     const password = loginForm.password.value;
     // Very insecure and very crap, i know
-    if (username === "user" && password === "web_dev") {
+    if (username === "behoorlijk" && password === "beuken") {
         alert("You have successfully logged in.");
         window.location.replace("https://djgriffioen.live/track")
     } else {
