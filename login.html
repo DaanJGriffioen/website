@@ -8,19 +8,7 @@
     <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
 
     <button onclick="loginWithRedirect()">Login</button>
-	<script src="https://cdn.auth0.com/js/auth0/9.12.2/auth0.min.js"></script>
-	<script>
-		// Replace the placeholders below with your Auth0 domain and client ID
-		var auth0 = new auth0.WebAuth({
-			domain: 'your-auth0-domain.auth0.com',
-			clientID: 'your-auth0-client-id'
-		});
-
-		function loginWithRedirect() {
-			auth0.authorize({
-				scope: 'openid email profile'
-			});
-		}
+    <script src="app.js"></script>
 	</script>
 
   </body>
