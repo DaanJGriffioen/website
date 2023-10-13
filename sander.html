@@ -1,17 +1,34 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="zwartstyle.css">
-    <title>Danku Sander</title>
-  </head>
-  <div class="header">
-    <h1>Dankjewel Sander</h1>
-  </div>
-  <body>
-<div class="mask1">
-  <p>Fucking grappig
-  </p>
-  </div>
-  </body>
+<head>
+    <title>Yes and No Counter</title>
+    <script>
+        let yesCount = 0;
+        let noCount = 0;
+
+        function incrementCount(option) {
+            if (option === 'ja') {
+                yesCount++;
+            } else if (option === 'nee') {
+                noCount++;
+            }
+
+            updateCounters();
+        }
+
+        function updateCounters() {
+            document.getElementById('yesCount').innerHTML = yesCount;
+            document.getElementById('noCount').innerHTML = noCount;
+        }
+    </script>
+</head>
+<body>
+    <h1>Yes and No Counter</h1>
+    
+    <button onclick="incrementCount('ja')">Ja</button>
+    <button onclick="incrementCount('nee')">Nee</button>
+
+    <p>Yes Count: <span id="yesCount">0</span></p>
+    <p>No Count: <span id="noCount">0</span></p>
+</body>
 </html>
