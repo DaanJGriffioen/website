@@ -1,0 +1,79 @@
+/* Reset styles */
+html, body {
+  background-color: rgb(255, 255, 255);
+  font: 1em sans-serif;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+
+/* Flexbox centering for the body */
+
+/* Optional: Center the image independently if needed */
+.center {
+  width: 100%;
+  background-color: #007d7b;
+  justify-content: center;
+  align-items: center;
+}
+
+input, button, select {
+  width: 45%;
+  height: 5%;
+  margin: 5px;
+  border: 2px solid black;
+  border-radius: 4px;
+}
+
+.topnav{
+  overflow: hidden;
+  background-color: #000;
+}
+
+.topnav a{
+  text-align: center;
+  float: left;
+  display: block;
+  color: white;
+  padding: 2% 1%;
+  text-decoration: none;
+  height: inherit;
+}
+
+.topnav img{
+  float: left;
+  display: block;
+  color: white;
+  text-decoration: none;
+}
+
+.topnav-header{
+  float: left;
+  color: #1900ff;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-right: 50%;
+}
+
+a:hover{
+  background-color: #ddd;
+  color:grey;
+}
+
+#bar{
+  width: 100%;
+  border: 5px solid rgb(0, 0, 0);
+}
+
+#alert-track{
+  color:red;
+  font-size: x-large;
+}
+
+#track-butt:active{
+  border-width: 3px;
+  border-color: grey;
+  background-color: grey;
+}

@@ -1,0 +1,41 @@
+<!-- <!DOCTYPE html> -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="../../js/tracker.js"></script>
+<link href="../css/style.css" type="text/css" rel="stylesheet">
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Daans GymTracker</title>
+  </head>
+
+  <body>
+    <div class="container">
+
+      <div class="topnav">
+        <h1 class="topnav-header">Gym-Tracker</h3>
+        <a href="./index">Home</a>
+        <a href="./404">Toevoegen</a>
+      </div>
+      <div style="width: 100%; height: 3%;"></div>
+
+      <select required id="naam-dd">
+        <script>dropdown(0);</script>
+      </select>
+
+      <select required id="exc-dd">
+        <script>dropdown(1);</script>
+      </select>
+
+      <input id="gewicht" placeholder="Gewicht" type="number" required="true"> 
+
+      <input id="reps" placeholder="Reps" type="number" required="true">
+      
+      <input id="sets" placeholder="Sets" type="number" required="true">
+
+      <button id="track-butt" onclick="sendSets()">Verzenden</button>
+    </div>
+
+    <p id="alert-track"></p>
+  </body>
+</html>
