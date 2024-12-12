@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Yes and No Counter</title>
+    <script>
+        let yesCount = 7;
+        let noCount = 0;
+
+        function incrementCount(option) {
+            if (option === 'ja') {
+                yesCount++;
+            } else if (option === 'nee') {
+                noCount++;
+            }
+
+            updateCounters();
+        }
+
+        function updateCounters() {
+            document.getElementById('yesCount').innerHTML = yesCount;
+            document.getElementById('noCount').innerHTML = noCount;
+        }
+    </script>
+</head>
+<body>
+    <h1>Is dit een mooie foto van ons Noah?</h1>
+    <img src=abc.jpg>
+    
+    <button onclick="incrementCount('ja')">Ja</button>
+    <button onclick="incrementCount('nee')">Nee</button>
+
+    <p>Yes Count: <span id="yesCount">8</span></p>
+    <p>No Count: <span id="noCount">0</span></p>
+</body>
+</html>
