@@ -1,15 +1,26 @@
-// import { mysql } from 'mysql';
-
-function  getSelectValue(id) {
+function getSelectValue(id) {
   let element = document.getElementById(String(id));
   if(element.selectedIndex == 0){
-      document.getElementById("alert-track").innerHTML = "Dropdown niet goed ingevuld!";
+      document.getElementById("alert-track");
       return null;
   }
   return element.options[element.selectedIndex].text;
 }
 
-function dropdown(type){
+async function fetchData() {
+  try {
+    const response = await fetch(`/api/excercise`); // Assumes the server exposes a route at /api/data
+    if (!response.ok) {
+        throw new Error(`Server error: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return (data);
+  } catch (error) {
+    console.error('Failed to fetch data:', error);
+  }
+}
+
+async function dropdown(type){
   var array = [];
   var elements = "";
   // Just for testing
@@ -19,7 +30,14 @@ function dropdown(type){
     elements = "<option value =\"\">Kies je naam</option>\n";
   }
   if(type === 1){
-    array = ['Bench', 'Touwen', 'LegPress', 'Pec Fly'];
+    array = await fetchData();
+    var abc = [];
+    for(var i = 0; i < array.length; i+=1){
+      abc.push(Object.values(array[i]).toString());
+    }
+    console.log(abc);
+    array = abc;
+
     elements = "<option value =\"\">Kies je oefening</option>\n";
   }
 
@@ -31,21 +49,4 @@ function dropdown(type){
     document.getElementById('naam-dd').innerHTML = elements;
   if(type === 1)
     document.getElementById('exc-dd').innerHTML = elements;
-}
-
-function sendSets(){
-  console.log("LOADEDEDED");
-  console.log("1 " + document.getElementById("gewicht").value);
-  console.log("2 " + getSelectValue('exc-dd'));
-  console.log("3 " + document.getElementById("reps").value);
-  console.log("4 " + document.getElementById("sets").value);
-  console.log("5 " + getSelectValue("naam-dd"));
-  
-  let weight = document.getElementById("gewicht").value;
-  let repetitions =  document.getElementById("reps").value
-  let sets =  document.getElementById("sets").value
-  let excercise = getSelectValue("exc-dd")
-
-
-
 }

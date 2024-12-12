@@ -10,6 +10,23 @@
   </head>
 
   <body>
-    <h1>Toevoegen van nieuwe oefeningen gebeurt hier</h1>
+
+    <div class="container">
+      <div class="topnav">
+        <h1 class="topnav-header">Gym-Tracker</h3>
+        <a href="./index">Home</a>
+        <a href="./tracker">Tracker</a>
+        <a href="./toevoegen">Toevoegen</a>
+        <a href="./display">Display</a>
+      </div>
+      
+      <form action="./toevoegen" method="POST">
+        <input name="hidden" type="hidden" value="1">
+
+        <input name="exercise" id="excs-add"  type="text" placeholder="Oefening" required="true">
+
+        <input name="submit" type="submit" formmethod="post">
+      </form>
+    </div>
   </body>
 </html>

@@ -1,3 +1,5 @@
+/* nicked from https://codepen.io/florantara/pen/dROvdb */
+
 /* Reset styles */
 html, body {
   background-color: rgb(255, 255, 255);
@@ -77,3 +79,12 @@ a:hover{
   border-color: grey;
   background-color: grey;
 }
+
+#excs-add{
+  font-size: large;
+  width:80%;
+}
+
+/* table, th, td {
+  border: 1px solid;
+} */

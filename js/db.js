@@ -1,27 +1,52 @@
-import pkg from 'sqlite3';
-const { sqlite3 } = pkg;
+import sqlite3 from 'sqlite3';
+import fs from 'fs';
 
-const filepath = "./sportDB";
+const filepath = "./sql/sportDB.sql";
 
-function createDB(){
-  const db = new sqlite3.Database(filepath, (error) =>{
+export default async function createDB(){
+  var exists = true;
+  if(fs.existsSync(filepath)) exists = false
+
+  var db = await new sqlite3.Database(filepath, (error) =>{
     if(error)
       return console.error(error.message);
     }
   );
   console.log("Connection has been established with the database");
+  if(exists){
+    db = createTable(db);
+  }
   return db
 }
 
-function createTable(db){
-  db.exec(`
-    CREATE TABLE sport
+export async function createTable(db){
+  await db.exec(`
+    CREATE TABLE sporter
     (
-      ID INTEGER PRIMARY KEY AUTOINCREMENT,
-      naam VARCHAR(20) NOT NULL,
-      FOREIGN KEY
-    )
-    `)
-}
+      sporterID INTEGER PRIMARY KEY AUTOINCREMENT,
+      naam VARCHAR(20) NOT NULL
+    )`);
 
-module.exports = createDB(); 
+    await db.exec(`
+      CREATE TABLE excercises
+      (
+        exID INTEGER PRIMARY KEY AUTOINCREMENT,
+        naam VARCHAR(50) NOT NULL
+      )`);
+
+    await db.exec(`
+      CREATE TABLE entry
+      (
+        entID INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        exercise INTEGER NOT NULL,
+        weight INTEGER NOT NULL,
+        reps INTEGER NOT NULL,
+        sets INTEGER NOT NULL,
+        sporter INTEGER NOT NULL,
+
+        FOREIGN KEY(exercise) REFERENCES exercises(exID),
+        FOREIGN KEY(sporter) REFERENCES sporter(sporterID)
+      )`);
+  return db;
+}
