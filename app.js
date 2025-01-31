@@ -9,7 +9,7 @@ import sanitizeHtml from 'sanitize-html';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const hostname = '192.168.1.17';
+const hostname = 'x.x.x.x';
 const port = 3000;
 const db = await createDB();
 
