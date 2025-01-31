@@ -39,6 +39,8 @@ function displayData(data, name) {
       bodyCell.innerHTML = JSON.stringify(value);
     }
     first = false;
+    bodyCell = bodyRow.insertCell(-1);
+    bodyCell.innerHTML = `<td><a href="javascript:fetch('/api/remove/${name}/${item["Oefening"]}');">WEG</a></td>`
     bodyRow = table.insertRow(-1)
   });
 

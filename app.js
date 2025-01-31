@@ -49,13 +49,18 @@ function commitToDB(db, data){
   }
 }
 
-const requestListener = function (req, res) {
+const requestListener = async function (req, res) {
+  let nameID = -1;
+  let data = '';
   let baseName = path.basename(req.url);
   if(baseName === '') baseName = 'index';
   let contentType, filePath;
-  let data = '';
   const ext = path.extname(req.url);
   const urlParts = req.url.split('/').slice(1);
+
+  if(urlParts[2] === 'daan') nameID = 0;
+  else if(urlParts[2] === 'thomas') nameID = 1;
+  else if(urlParts[2] === 'noah') nameID = 2;
 
   if(req.method === 'POST'){
     req.on('data', chunk => {
@@ -67,52 +72,95 @@ const requestListener = function (req, res) {
     });
   }
 
-  // Handle api requests made to transfer data from sql to html 
-  if(req.method === 'GET' && urlParts[0] === 'api' && urlParts[1] === 'data') {
-    var nameID;
-    if(urlParts[2] === 'daan') nameID = 0;
-    else if(urlParts[2] === 'thomas') nameID = 1;
-    else if(urlParts[2] === 'noah') nameID = 2;
-
-    // Geen idee wtf er gebeurd bij ex.exid maar het beurt 
-    res.setHeader('Content-Type', 'application/json');
-    db.all(`
-      SELECT
-        ex.naam as Oefening,
-        MAX(e.weight) as gewicht,
-        e.reps,
-        e.sets
-      FROM 
-        entry e LEFT JOIN excercises ex ON e.exercise = ex.exID-1 
-      WHERE 
-        sporter IS ${nameID} 
-      GROUP BY
-        ex.exID;`, [], (err, rows) => {
-      if(err) {
-        console.log(err);
+  if (req.method === 'GET' && urlParts[0] === 'api') {
+    let exID = -1;
+    if (urlParts[1] === 'remove') {
+      if (nameID === -1) {
         res.writeHead(500);
-        res.end(JSON.stringify({error: 'DB error', message: err.message}));
+        res.end(JSON.stringify({ error: 'DB error', message: 'Invalid nameID' }));
+        return;
       }
-      else {
-        res.writeHead(200);
-        res.end(JSON.stringify(rows));
+      try{
+        const rows = await new Promise((resolve, reject) => {
+          db.all(`SELECT exID FROM excercises WHERE naam IS '${urlParts[3]}';`, [], async (err, rows) => {
+            if (err) reject(err);
+            else resolve(rows);
+        });
+      });
+  
+      if (rows.length === 0) {
+        res.writeHead(404);
+        res.end(JSON.stringify({ error: 'Not found', message: 'Exercise not found' }));
+        return;
       }
+  
+        exID = rows[0].exID;
+        console.log(exID, nameID);
+  
+        // Now delete from the entry table
+      console.log('Deleting entry...');
+      await new Promise((resolve, reject) => {
+        db.get(`DELETE FROM entry WHERE sporter=(?) AND exercise = (?);`, [nameID, exID-1], (err, rows)=>{
+          if (err) reject(err);
+          else resolve(rows);
+      });
     });
+    res.writeHead(200);
+    res.end(JSON.stringify({ message: 'Entry deleted successfully' }));
+    }
+    catch(err) {
+      console.log(err);
+      res.writeHead(500);
+      res.end(JSON.stringify({error: 'DB error', message:err.message}));
+    }
     return;
   }
-  else if(req.method === 'GET' && urlParts[0] === 'api' && urlParts[1] === 'excercise') {
-    res.setHeader('Content-Type', 'application/json');
-    db.all(`SELECT naam FROM excercises;`, [], (err, rows) => {
-      if(err) {
+
+    else if(urlParts[1] === 'data'){
+      if(nameID === -1){
         res.writeHead(500);
         res.end(JSON.stringify({error: 'DB error', message: err.message}));
       }
-      else {
-        res.writeHead(200);
-        res.end(JSON.stringify(rows));
-      }
-    });
-    return;
+      // Geen idee wtf er gebeurd bij ex.exid maar het werkt 
+      res.setHeader('Content-Type', 'application/json');
+      db.all(`
+        SELECT
+          ex.naam as Oefening,
+          MAX(e.weight) as gewicht,
+          e.reps,
+          e.sets
+        FROM 
+          entry e LEFT JOIN excercises ex ON e.exercise = ex.exID-1 
+        WHERE 
+          sporter IS ${nameID} 
+        GROUP BY
+          ex.exID;`, [], (err, rows) => {
+        if(err) {
+          console.log(err);
+          res.writeHead(500);
+          res.end(JSON.stringify({error: 'DB error', message: err.message}));
+        }
+        else {
+          res.writeHead(200);
+          res.end(JSON.stringify(rows));
+        }
+      });
+      return;
+    }
+    else if(urlParts[1] === 'excercise'){
+      res.setHeader('Content-Type', 'application/json');
+      db.all(`SELECT naam FROM excercises;`, [], (err, rows) => {
+        if(err) {
+          res.writeHead(500);
+          res.end(JSON.stringify({error: 'DB error', message: err.message}));
+        }
+        else {
+          res.writeHead(200);
+          res.end(JSON.stringify(rows));
+        }
+      });
+      return;
+    }
   }
 
   switch(ext){
@@ -153,6 +201,7 @@ const requestListener = function (req, res) {
   .catch(err => {
       res.setHeader('Content-Type', 'text/plain');
       res.writeHead(500);
+      console.log(err);
       res.end(`Error ${err}`);
   });
   
