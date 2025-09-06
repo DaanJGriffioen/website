@@ -13,7 +13,7 @@ export default async function createDB(){
     db = createTable(db);
   }
   return db
-}
+} 
 
 export async function createTable(db){
   await db.exec(`
