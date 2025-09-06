@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3';
 import fs from 'fs';
 
-const filepath = "./sql/sportDB.db";
+const filepath = "./sql/sportDB.sql";
 
 export default async function createDB(){
   var exists = true;
