@@ -9,8 +9,8 @@ import sanitizeHtml from 'sanitize-html';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const hostname = '172.30.127.135';
-const port = process.env.PORT || 8080;
+// const hostname = '172.30.127.135';
+// const port = process.env.PORT || 8080;
 const db = await createDB();
 
 // This could be much better
@@ -210,7 +210,6 @@ const requestListener = async function (req, res) {
 
 const server = http.createServer(requestListener);
 
-server.listen(port, () => {
-  console.log(`Server is running on http://${hostname}:${port}`);
+server.listen( () => {
+  console.log(`Server is running`);
 });
-
