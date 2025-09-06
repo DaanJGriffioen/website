@@ -10,7 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // const hostname = '172.30.127.135';
-// const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8080;
 const db = await createDB();
 
 // This could be much better
@@ -210,6 +210,6 @@ const requestListener = async function (req, res) {
 
 const server = http.createServer(requestListener);
 
-server.listen( () => {
+server.listen(port, () => {
   console.log(`Server is running`);
 });
