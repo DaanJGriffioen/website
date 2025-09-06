@@ -28,7 +28,7 @@ export async function createTable(db){
       (
         exID INTEGER PRIMARY KEY AUTOINCREMENT,
         naam VARCHAR(50) NOT NULL
-      )`);
+      )`); 
 
     await db.exec(`
       CREATE TABLE entry
