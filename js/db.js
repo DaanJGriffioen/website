@@ -1,4 +1,4 @@
-import sqlite3 from 'sqlite3';
+import Database from 'better-sqlite3';
 import fs from 'fs';
 
 const filepath = "./sql/sportDB.sql";
@@ -7,11 +7,7 @@ export default async function createDB(){
   var exists = true;
   if(fs.existsSync(filepath)) exists = false
 
-  var db = await new sqlite3.Database(filepath, (error) =>{
-    if(error)
-      return console.error(error.message);
-    }
-  );
+  var db = new Database(filepath);
   console.log("Connection has been established with the database");
   if(exists){
     db = createTable(db);
