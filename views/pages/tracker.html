@@ -1,50 +1,198 @@
-<!-- <!DOCTYPE html> -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="../../js/tracker.js"></script>
-<link href="../css/style.css" type="text/css" rel="stylesheet">
-
+<!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daans GymTracker</title>
-  </head>
+    <style>
+        /* Modern Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-  <body>
-    <div class="container">
+        body {
+            background-color: #121212; /* Dark theme for gym vibes */
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-      <div class="topnav">
-        <h1 class="topnav-header">Gym-Tracker</h3>
-        <a href="./index.html">Home</a>
-        <a href="./tracker.html">Tracker</a>
-        <a href="./toevoegen.html">Toevoegen</a>
-        <a href="./display.html">Display</a>
-      </div>
+        /* Top Navigation */
+        .topnav {
+            width: 100%;
+            background-color: #000;
+            padding: 15px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #1900ff;
+        }
 
-      <div style="width: 100%; height: 3%;"></div>
+        .topnav-header {
+            color: #1900ff;
+            font-size: 1.5rem;
+            margin: 0;
+        }
 
-      <form action="./tracker.html" method="POST">
-        
-        <input name="hidden" type="hidden" value="0">
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
 
-        <select name="sporter" required id="naam-dd">
-          <script>dropdown(0);</script>
-        </select>
+        .nav-links a:hover {
+            background-color: #333;
+            border-radius: 4px;
+        }
 
-        <select name="exercise" required id="exc-dd">
-          <script>dropdown(1);</script>
-        </select>
+        /* Main Container */
+        .container {
+            width: 90%;
+            max-width: 450px;
+            margin-top: 40px;
+            text-align: center;
+        }
 
-        <input name="weight" id="weight" placeholder="Gewicht" type="number" required="true"> 
+        .card {
+            background: #1e1e1e;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
 
-        <input name="reps" id="reps" placeholder="Reps" type="number" required="true">
-        
-        <input name="sets" id="sets" placeholder="Sets" type="number" required="true">
-        
+        h2 {
+            margin-bottom: 25px;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
 
-        <input name="submit" type="submit" formmethod="post">
-      </form>
+        /* The B/F Selection Group */
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        /* Hide the ugly radio button */
+        .type-option input {
+            display: none;
+        }
+
+        /* The Custom Buttons */
+        .type-label {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 4px solid transparent;
+            user-select: none;
+        }
+
+        /* B Button Styles */
+        .b-btn {
+            background-color: #ff9800; /* Orange */
+            color: white;
+        }
+
+        /* F Button Styles */
+        .f-btn {
+            background-color: #ffeb3b; /* Yellow */
+            color: #000;
+        }
+
+        /* Selection effect */
+        .type-option input:checked + .type-label {
+            transform: scale(1.15);
+            border-color: white;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+
+        .type-label:hover {
+            opacity: 0.9;
+            transform: translateY(-3px);
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: #1900ff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: #1300cc;
+        }
+
+        #alert-track {
+            color: #ff4444;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topnav">
+        <h1 class="topnav-header">Gym-Tracker</h1>
+        <div class="nav-links">
+            <a href="./index">Home</a>
+            <a href="./tracker">Tracker</a>
+            <a href="./toevoegen">Toevoegen</a>
+            <a href="./display">Display</a>
+        </div>
     </div>
 
-    <p id="alert-track"></p>
-  </body>
+    <div class="container">
+        <div class="card">
+            <h2>Track Session</h2>
+            
+            <form action="./tracker" method="POST">
+                <div class="button-group">
+                    <label class="type-option">
+                        <input type="radio" name="type" value="1" required>
+                        <div class="type-label b-btn">B</div>
+                    </label>
+
+                    <label class="type-option">
+                        <input type="radio" name="type" value="2" required>
+                        <div class="type-label f-btn">F</div>
+                    </label>
+                </div>
+
+                <input name="time" type="hidden" value="" id="current-time">
+                
+                <button type="submit" class="submit-btn">LOG WORKOUT</button>
+            </form>
+        </div>
+        
+        <p id="alert-track"></p>
+    </div>
+
+    <script>
+        // Automatic timestamp logic
+        document.getElementById('current-time').value = new Date().toTimeString().split(' ')[0];
+    </script>
+
+</body>
 </html>

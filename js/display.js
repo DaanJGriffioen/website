@@ -30,6 +30,7 @@ function displayData(data, name) {
 
   var first = true;
   data.forEach(item => {
+    console.log(data);
     for(const [key, value] of Object.entries(item)){
       if(first){
         headCell = headRow.insertCell(-1);
@@ -40,7 +41,7 @@ function displayData(data, name) {
     }
     first = false;
     bodyCell = bodyRow.insertCell(-1);
-    bodyCell.innerHTML = `<td><a href="javascript:fetch('/api/remove/${name}/${item["Oefening"]}');">WEG</a></td>`
+    // bodyCell.innerHTML = `<td><a href="javascript:fetch('/api/remove/${name}/${item["Oefening"]}');">WEG</a></td>`
     bodyRow = table.insertRow(-1)
   });
 
@@ -49,7 +50,8 @@ function displayData(data, name) {
 
 // Initialize the script
 window.onload = () => {
-  fetchData('daan');
-  fetchData('thomas');
-  fetchData('noah');
+  // fetchData('daan');
+  // fetchData('thomas');
+  // fetchData('noah');
+  fetchData('dr');
 };

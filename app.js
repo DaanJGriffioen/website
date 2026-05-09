@@ -11,42 +11,45 @@ const __dirname = path.dirname(__filename);
 
 // const hostname = '172.30.127.135';
 const port = process.env.PORT || 8080;
-const db = await createDB();
+const db = createDB();
 
 // This could be much better
 function commitToDB(db, data){
   let name = [];
   let val = [];
 
-  let splitData = data.split('&');
+  let splitData = decodeURIComponent(data).split('&');
+  console.log(splitData);
   
-  let splitHidden = String(splitData[0]).split('=')[1];
+  // let splitHidden = String(splitData[0]).split('=')[1];
 
-  if(splitHidden === '0'){
+  // if(splitHidden === '0'){
     console.log('tracker!');
-    for (let index = 1; index < splitData.length-1; index++) {
+    for (let index = 0; index < splitData.length; index++) {
       const element = splitData[index];
-      name.push(element.split('=')[0]);
-      val.push(element.split('=')[1]);
+      console.log(element);
+      name.push(decodeURIComponent(element.split('=')[0]));
+      val.push(decodeURIComponent(element.split('=')[1]));
     }
-
-    db.exec(`INSERT INTO entry(${name[0]}, ${name[1]}, ${name[2]}, ${name[3]}, ${name[4]}) VALUES(${val[0]}, ${val[1]}, ${val[2]}, ${val[3]}, ${val[4]});`);
-
-  }
-  else if(splitHidden === '1'){
-    const element = splitData[1];
-    var help;
+    console.log(`INSERT INTO tracker(${name[0]}, ${name[1]}) VALUES(?, ?) ${val[0]}  ${val[1]}`);
+    db.prepare(`INSERT INTO tracker(${name[0]}, ${name[1]}) VALUES(?, ?)`).run(val[0], val[1]);
+    // db.exec(`INSERT INTO entry(${name[0]}, ${name[1]}, ${name[2]}, ${name[3]}, ${name[4]}) VALUES(${val[0]}, ${val[1]}, ${val[2]}, ${val[3]}, ${val[4]});`);
+// 
+  // }
+  // else if(splitHidden === '1'){
+  //   const element = splitData[1];
+  //   var help;
     
-    help = sanitizeHtml(element.split('=')[0]);
-    name.push(help);
-    help = sanitizeHtml(element.split('=')[1]);
-    val.push(help);
+  //   help = sanitizeHtml(element.split('=')[0]);
+  //   name.push(help);
+  //   help = sanitizeHtml(element.split('=')[1]);
+  //   val.push(help);
 
-    console.log(name);
-    console.log(val);
+  //   console.log(name);
+  //   console.log(val);
 
-    db.exec(`INSERT INTO excercises(naam) VALUES("${val[0]}");`);
-  }
+  //   db.exec(`INSERT INTO excercises(naam) VALUES("${val[0]}");`);
+  // }
 }
 
 const requestListener = async function (req, res) {
@@ -58,10 +61,11 @@ const requestListener = async function (req, res) {
   const ext = path.extname(req.url);
   const urlParts = req.url.split('/').slice(1);
 
-  if(urlParts[2] === 'daan') nameID = 0;
-  else if(urlParts[2] === 'thomas') nameID = 1;
-  else if(urlParts[2] === 'noah') nameID = 2;
-
+  // if(urlParts[2] === 'daan') nameID = 0;
+  // else if(urlParts[2] === 'thomas') nameID = 1;
+  // else if(urlParts[2] === 'noah') nameID = 2;
+  nameID = 3;
+  
   if(req.method === 'POST'){
     req.on('data', chunk => {
       data += chunk.toString();
@@ -74,19 +78,14 @@ const requestListener = async function (req, res) {
 
   if (req.method === 'GET' && urlParts[0] === 'api') {
     let exID = -1;
-    if (urlParts[1] === 'remove') {
+    if (urlParts[1] === 'remove' && false) {
       if (nameID === -1) {
         res.writeHead(500);
         res.end(JSON.stringify({ error: 'DB error', message: 'Invalid nameID' }));
         return;
       }
       try{
-        const rows = await new Promise((resolve, reject) => {
-          db.all(`SELECT exID FROM excercises WHERE naam IS '${urlParts[3]}';`, [], async (err, rows) => {
-            if (err) reject(err);
-            else resolve(rows);
-        });
-      });
+        const rows = db.prepare(`SELECT exID FROM excercises WHERE naam IS '${urlParts[3]}';`).all();
   
       if (rows.length === 0) {
         res.writeHead(404);
@@ -99,12 +98,7 @@ const requestListener = async function (req, res) {
   
         // Now delete from the entry table
       console.log('Deleting entry...');
-      await new Promise((resolve, reject) => {
-        db.get(`DELETE FROM entry WHERE sporter=(?) AND exercise = (?);`, [nameID, exID-1], (err, rows)=>{
-          if (err) reject(err);
-          else resolve(rows);
-      });
-    });
+      db.prepare(`DELETE FROM entry WHERE sporter=(?) AND exercise = (?);`).run(nameID, exID-1);
     res.writeHead(200);
     res.end(JSON.stringify({ message: 'Entry deleted successfully' }));
     }
@@ -119,46 +113,58 @@ const requestListener = async function (req, res) {
     else if(urlParts[1] === 'data'){
       if(nameID === -1){
         res.writeHead(500);
-        res.end(JSON.stringify({error: 'DB error', message: err.message}));
+        // res.end(JSON.stringify({error: 'DB error', message: err.message}));
       }
       // Geen idee wtf er gebeurd bij ex.exid maar het werkt 
       res.setHeader('Content-Type', 'application/json');
-      db.all(`
-        SELECT
-          ex.naam as Oefening,
-          MAX(e.weight) as gewicht,
-          e.reps,
-          e.sets
-        FROM 
-          entry e LEFT JOIN excercises ex ON e.exercise = ex.exID-1 
-        WHERE 
-          sporter IS ${nameID} 
-        GROUP BY
-          ex.exID;`, [], (err, rows) => {
-        if(err) {
-          console.log(err);
-          res.writeHead(500);
-          res.end(JSON.stringify({error: 'DB error', message: err.message}));
-        }
-        else {
-          res.writeHead(200);
-          res.end(JSON.stringify(rows));
-        }
-      });
+      // db.all(`
+      //   SELECT
+      //     ex.naam as Oefening,
+      //     MAX(e.weight) as gewicht,
+      //     e.reps,
+      //     e.sets
+      //   FROM 
+      //     entry e LEFT JOIN excercises ex ON e.exercise = ex.exID-1 
+      //   WHERE 
+      //     sporter IS ${nameID} 
+      //   GROUP BY
+      //     ex.exID;`, [], (err, rows) => {
+      //   if(err) {
+      //     console.log(err);
+      //     res.writeHead(500);
+      //     res.end(JSON.stringify({error: 'DB error', message: err.message}));
+      //   }
+      //   else {
+      //     res.writeHead(200);
+      //     res.end(JSON.stringify(rows));
+      //   }
+      // });
+      try {
+        const rows = db.prepare(`
+          SELECT
+            type,
+            time
+          FROM tracker;
+        `).all();
+        res.writeHead(200);
+        res.end(JSON.stringify(rows));
+      } catch(err) {
+        console.log(err);
+        res.writeHead(500);
+        res.end(JSON.stringify({error: 'DB error', message: err.message}));
+      }
       return;
     }
     else if(urlParts[1] === 'excercise'){
       res.setHeader('Content-Type', 'application/json');
-      db.all(`SELECT naam FROM excercises;`, [], (err, rows) => {
-        if(err) {
-          res.writeHead(500);
-          res.end(JSON.stringify({error: 'DB error', message: err.message}));
-        }
-        else {
-          res.writeHead(200);
-          res.end(JSON.stringify(rows));
-        }
-      });
+      try {
+        const rows = db.prepare(`SELECT naam FROM excercises;`).all();
+        res.writeHead(200);
+        res.end(JSON.stringify(rows));
+      } catch(err) {
+        res.writeHead(500);
+        res.end(JSON.stringify({error: 'DB error', message: err.message}));
+      }
       return;
     }
   }
