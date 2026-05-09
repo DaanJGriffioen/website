@@ -6,7 +6,6 @@
   "type": "module",
   "scripts": {
     "start": "node index.js",
-    "build": "echo 'No build step required'"
   },
   "dependencies": {
     "better-sqlite3": "^12.2.0",
